@@ -15,7 +15,50 @@
 				"mcp-remote",
 				"https://mcp.linear.app/mcp"
 			]
+		},
+		"io.github.upstash/context7": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"@upstash/context7-mcp@1.0.31"
+			],
+			"env": {
+				"CONTEXT7_API_KEY": "${input:CONTEXT7_API_KEY}"
+			},
+			"gallery": "https://api.mcp.github.com",
+			"version": "1.0.31"
+		},
+		"getsentry/sentry-mcp": {
+			"type": "http",
+			"url": "https://mcp.sentry.dev/sse",
+			"gallery": "https://api.mcp.github.com",
+			"version": "1.0.0"
+		},
+		"com.postman/postman-mcp-server": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"@postman/postman-mcp-server@2.5.1"
+			],
+			"env": {
+				"POSTMAN_API_KEY": "${input:POSTMAN_API_KEY}"
+			},
+			"gallery": "https://api.mcp.github.com",
+			"version": "2.5.1"
 		}
 	},
-	"inputs": []
+	"inputs": [
+		{
+			"id": "CONTEXT7_API_KEY",
+			"type": "promptString",
+			"description": "API key for authentication",
+			"password": true
+		},
+		{
+			"id": "POSTMAN_API_KEY",
+			"type": "promptString",
+			"description": "A valid Postman API key.",
+			"password": true
+		}
+	]
 }

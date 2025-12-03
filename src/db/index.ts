@@ -1,20 +1,31 @@
 /**
- * Database Schema & Client
+ * Database Client - Prisma Singleton
  *
- * Este diretório contém:
- * - schema.prisma: Definição do banco de dados
- * - client.ts: Instância do Prisma Client
- * - migrations/: Histórico de migrações
- *
- * Estrutura esperada:
- * db/
- * ├── index.ts          # Exporta o cliente e helpers
- * ├── client.ts         # Singleton do Prisma Client
- * ├── schema.prisma     # Schema do banco
- * └── migrations/       # Migrações (gerado pelo Prisma)
+ * Exporta uma instância única do Prisma Client para uso em toda a aplicação.
+ * Evita criar múltiplas conexões em ambiente de desenvolvimento (hot reload).
  */
 
-// TODO: Instalar Prisma: pnpm add prisma @prisma/client
-// TODO: Inicializar Prisma: npx prisma init
+import { PrismaClient } from "@prisma/client";
 
-export {};
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
+
+// Exporta como default também para conveniência
+export default prisma;
+
+// Re-exporta tipos úteis do Prisma
+export type { Prisma } from "@prisma/client";
