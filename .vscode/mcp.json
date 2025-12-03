@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"next-devtools": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"next-devtools-mcp@latest"
+			],
+			"env": {}
+		}
+	},
+	"inputs": []
+}
