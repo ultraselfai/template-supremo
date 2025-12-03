@@ -18,10 +18,9 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { Logo } from "@/components/logo"
-import { SidebarNotification } from "@/components/sidebar-notification"
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/layout/nav-main"
+import { NavUser } from "@/components/layout/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -34,8 +33,8 @@ import {
 
 const data = {
   user: {
-    name: "ShadcnStore",
-    email: "store@example.com",
+    name: "Decode",
+    email: "console@decode.ink",
     avatar: "",
   },
   navGroups: [
@@ -221,8 +220,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Logo size={24} className="text-current" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">ShadcnStore</span>
-                  <span className="truncate text-xs">Admin Dashboard</span>
+                  <span className="truncate font-medium">Decode</span>
+                  <span className="truncate text-xs">Admin Console</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -235,7 +234,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <SidebarNotification />
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

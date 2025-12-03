@@ -7,6 +7,14 @@
 				"next-devtools-mcp@latest"
 			],
 			"env": {}
+		},
+		"Linear": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"mcp-remote",
+				"https://mcp.linear.app/mcp"
+			]
 		}
 	},
 	"inputs": []
