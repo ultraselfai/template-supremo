@@ -47,7 +47,8 @@ export function NavUser({
     setIsLoggingOut(true)
     try {
       await authClient.signOut()
-      router.push("/login")
+      // Redireciona para login do admin (não do usuário)
+      router.push("/admin/login")
       router.refresh()
     } catch (error) {
       console.error("Erro ao fazer logout:", error)

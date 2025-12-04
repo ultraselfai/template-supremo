@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarConfigProvider } from "@/contexts/sidebar-context";
 import { inter } from "@/lib/fonts";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Shadcn Dashboard",
@@ -21,6 +22,7 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
           <SidebarConfigProvider>
             {children}
+            <Toaster richColors position="top-right" />
           </SidebarConfigProvider>
         </ThemeProvider>
       </body>

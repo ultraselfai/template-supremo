@@ -144,8 +144,22 @@ export function proxy(request: NextRequest) {
   const authenticated = isAuthenticated(request)
   
   if (!authenticated) {
-    // Redireciona para login mantendo a URL de retorno
-    const loginUrl = new URL('/login', request.url)
+    // Determina para qual login redirecionar
+    // Rotas do dashboard/admin vão para /admin/login
+    // Outras rotas vão para /login (usuário comum)
+    const isAdminRoute = pathname.startsWith('/dashboard') || 
+                         pathname.startsWith('/settings') ||
+                         pathname.startsWith('/admin') ||
+                         pathname.startsWith('/calendar') ||
+                         pathname.startsWith('/chat') ||
+                         pathname.startsWith('/mail') ||
+                         pathname.startsWith('/tasks') ||
+                         pathname.startsWith('/users') ||
+                         pathname.startsWith('/faqs') ||
+                         pathname.startsWith('/pricing')
+    
+    const loginPath = isAdminRoute ? '/admin/login' : '/login'
+    const loginUrl = new URL(loginPath, request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
   }
