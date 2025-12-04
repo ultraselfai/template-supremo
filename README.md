@@ -1,4 +1,4 @@
-# Template Supremo v1.0
+# Decode Console Multi-tenant Template v1.0
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js_16-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
@@ -28,7 +28,7 @@
 
 ## 🎯 Visão Geral
 
-O **Template Supremo** é um boilerplate completo para criação de aplicações SaaS multi-tenant. Com ele, você economiza meses de desenvolvimento e pode focar no que realmente importa: as funcionalidades específicas do seu negócio.
+O **Decode Console Multi-tenant Template v1.0** é um boilerplate completo para criação de aplicações SaaS multi-tenant. Com ele, você economiza meses de desenvolvimento e pode focar no que realmente importa: as funcionalidades específicas do seu negócio.
 
 ### Por que usar este template?
 
@@ -529,4 +529,4 @@ pnpm db:studio    # Abre Prisma Studio
 
 **Bom desenvolvimento! 🚀**
 
-*Template Supremo v1.0 - Desenvolvido com ❤️*
+*Decode Console Multi-tenant Template v1.0 - Desenvolvido com ❤️ por Decode.ink*
