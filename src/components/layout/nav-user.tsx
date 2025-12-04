@@ -1,11 +1,14 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   CreditCard,
   EllipsisVertical,
   LogOut,
   BellDot,
   CircleUser,
+  Loader2,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -25,6 +28,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { authClient } from "@/lib/auth-client"
 
 export function NavUser({
   user,
@@ -36,6 +40,21 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  async function handleLogout() {
+    setIsLoggingOut(true)
+    try {
+      await authClient.signOut()
+      router.push("/login")
+      router.refresh()
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error)
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -82,28 +101,34 @@ export function NavUser({
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link href="/settings/account">
                   <CircleUser />
-                  Account
+                  Conta
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link href="/settings/billing">
                   <CreditCard />
-                  Billing
+                  Faturamento
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link href="/settings/notifications">
                   <BellDot />
-                  Notifications
+                  Notificações
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/auth/sign-in">
+            <DropdownMenuItem 
+              className="cursor-pointer" 
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? (
+                <Loader2 className="animate-spin" />
+              ) : (
                 <LogOut />
-                Log out
-              </Link>
+              )}
+              {isLoggingOut ? "Saindo..." : "Sair"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

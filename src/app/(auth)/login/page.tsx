@@ -1,14 +1,14 @@
-import { ForgotPasswordForm } from "./components/forgot-password-form"
+import { UserAuthForm } from "./components/user-auth-form"
 import { Logo } from "@/components/logo"
 import Link from "next/link"
 import Image from "next/image"
 
 export const metadata = {
-  title: "Recuperar Senha | Decode Console",
-  description: "Recupere sua senha do Decode Console",
+  title: "Login | Decode Console",
+  description: "Entre ou crie sua conta no Decode Console",
 }
 
-export default function ForgotPasswordPage() {
+export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md">
-            <ForgotPasswordForm />
+            <UserAuthForm />
           </div>
         </div>
       </div>

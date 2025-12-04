@@ -45,6 +45,10 @@
 			},
 			"gallery": "https://api.mcp.github.com",
 			"version": "2.5.1"
+		},
+		"sentry": {
+			"serverUrl": "https://mcp.sentry.dev/mcp",
+			"type": "http"
 		}
 	},
 	"inputs": [

@@ -1,24 +1,41 @@
 /**
- * Database Client - Prisma Singleton
+ * Database Client - Prisma 7 com Adapter PostgreSQL
  *
- * Exporta uma instância única do Prisma Client para uso em toda a aplicação.
- * Evita criar múltiplas conexões em ambiente de desenvolvimento (hot reload).
+ * Prisma 7 requer um adapter obrigatório para conexão com o banco.
+ * Usa singleton para evitar múltiplas conexões em desenvolvimento (hot reload).
+ *
+ * @see https://www.prisma.io/docs/guides/database-connectors/postgresql
  */
 
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+/**
+ * Cria o adapter PostgreSQL para Prisma 7
+ */
+function createPrismaClient(): PrismaClient {
+  const connectionString = process.env.DATABASE_URL;
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is required");
+  }
+
+  const adapter = new PrismaPg({ connectionString });
+
+  return new PrismaClient({
+    adapter,
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
         : ["error"],
   });
+}
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;

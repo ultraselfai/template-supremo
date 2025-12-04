@@ -2,14 +2,12 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 /**
- * Proxy do Next.js 16
+ * Middleware do Next.js
  * 
  * Responsável por:
  * - Detecção de tenant por subdomínio
  * - Proteção de rotas autenticadas
  * - Redirecionamentos de rotas antigas
- * 
- * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
 
 // Rotas públicas (não requerem autenticação)
@@ -95,7 +93,7 @@ function isAuthenticated(request: NextRequest): boolean {
   return !!sessionCookie?.value
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const host = request.headers.get('host') || 'localhost:3000'
   
