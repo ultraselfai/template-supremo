@@ -32,12 +32,15 @@ import { authClient } from "@/lib/auth-client"
 
 export function NavUser({
   user,
+  logoutRedirect = "/login",
 }: {
   user: {
     name: string
     email: string
     avatar: string
   }
+  /** URL para redirecionar após logout. Default: /login (usuário). Para admin: /admin-login */
+  logoutRedirect?: string
 }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
@@ -47,8 +50,7 @@ export function NavUser({
     setIsLoggingOut(true)
     try {
       await authClient.signOut()
-      // Redireciona para login do admin (não do usuário)
-      router.push("/admin/login")
+      router.push(logoutRedirect)
       router.refresh()
     } catch (error) {
       console.error("Erro ao fazer logout:", error)

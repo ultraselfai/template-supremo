@@ -15,6 +15,7 @@ import {
   CreditCard,
   LayoutTemplate,
   Users,
+  Building2,
 } from "lucide-react"
 import Link from "next/link"
 import { Logo } from "@/components/logo"
@@ -39,17 +40,17 @@ const data = {
   },
   navGroups: [
     {
-      label: "Dashboards",
+      label: "Gestão",
       items: [
         {
-          title: "Dashboard 1",
+          title: "Dashboard",
           url: "/dashboard",
           icon: LayoutDashboard,
         },
         {
-          title: "Dashboard 2",
-          url: "/dashboard-2",
-          icon: LayoutPanelLeft,
+          title: "Clientes",
+          url: "/organizations",
+          icon: Building2,
         },
       ],
     },
@@ -75,11 +76,6 @@ const data = {
           title: "Calendar",
           url: "/calendar",
           icon: Calendar,
-        },
-        {
-          title: "Users",
-          url: "/users",
-          icon: Users,
         },
       ],
     },
@@ -234,7 +230,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={data.user} logoutRedirect="/admin-login" />
       </SidebarFooter>
     </Sidebar>
   )

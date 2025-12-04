@@ -7,6 +7,7 @@
 
 export { BaseLayout } from "./base-layout";
 export { AppSidebar } from "./app-sidebar";
+export { ClientSidebar } from "./client-sidebar";
 export { SiteHeader } from "./site-header";
 export { SiteFooter } from "./site-footer";
 export { NavMain } from "./nav-main";

@@ -60,12 +60,18 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Redirects for better SEO
+  // Redirects for better SEO and backward compatibility
   async redirects() {
     return [
       {
         source: '/home',
         destination: '/dashboard',
+        permanent: true,
+      },
+      // Retrocompatibilidade DEC-18: Rota antiga do admin login
+      {
+        source: '/admin/login',
+        destination: '/admin-login',
         permanent: true,
       },
     ];

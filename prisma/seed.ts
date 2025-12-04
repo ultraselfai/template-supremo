@@ -51,7 +51,7 @@ async function hashPassword(password: string): Promise<string> {
 async function main() {
   console.log("🌱 Iniciando seed...\n");
 
-  // 1. Criar organização Decode
+  // 1. Criar organização Decode (principal)
   const org = await prisma.organization.upsert({
     where: { slug: "decode" },
     update: {},
@@ -64,6 +64,8 @@ async function main() {
         plan: "enterprise",
         domain: "decode.ink",
       },
+      allowedFeatures: ["dashboard", "users", "settings", "calendar", "tasks", "r2-upload"],
+      isSandbox: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -74,6 +76,34 @@ async function main() {
   console.log(`   Slug: ${org.slug}`);
   console.log(`   ID: ${org.id}\n`);
 
+  // 2. Criar organização Decode Lab (sandbox para features em desenvolvimento)
+  const decodeLab = await prisma.organization.upsert({
+    where: { slug: "decode-lab" },
+    update: {
+      isSandbox: true,
+    },
+    create: {
+      id: "org-decode-lab-001",
+      name: "Decode Lab",
+      slug: "decode-lab",
+      logo: null,
+      metadata: {
+        plan: "sandbox",
+        description: "Ambiente de desenvolvimento para testar features em dev",
+      },
+      allowedFeatures: ["dashboard", "users", "settings", "calendar", "tasks", "mail", "chat", "r2-upload"],
+      isSandbox: true, // Habilita acesso a features 'dev'
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log("✅ Decode Lab (Sandbox) criado:");
+  console.log(`   Nome: ${decodeLab.name}`);
+  console.log(`   Slug: ${decodeLab.slug}`);
+  console.log(`   ID: ${decodeLab.id}`);
+  console.log(`   Sandbox: ${decodeLab.isSandbox}\n`);
+
   // 2. Criar usuário admin
   const adminEmail = "admin@decode.ink";
   const adminPassword = "Admin@123";
@@ -81,13 +111,17 @@ async function main() {
 
   const user = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: {
+      role: "admin", // Garante que o admin tem role admin
+    },
     create: {
       id: "user-admin-001",
       name: "Decode Admin",
       email: adminEmail,
       emailVerified: true,
       image: null,
+      role: "admin", // Role de administrador do sistema
+      banned: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -121,7 +155,7 @@ async function main() {
   console.log(`   Provider: credential`);
   console.log(`   Senha: ${adminPassword}\n`);
 
-  // 4. Criar member (vínculo user-organization)
+  // 4. Criar member (vínculo user-organization com Decode principal)
   await prisma.member.upsert({
     where: {
       id: "member-admin-001",
@@ -136,7 +170,25 @@ async function main() {
     },
   });
 
-  console.log("✅ Member criado (vínculo usuário-organização)");
+  console.log("✅ Member criado (vínculo usuário-organização Decode)");
+  console.log(`   Role: owner\n`);
+
+  // 5. Criar member para Decode Lab (admin também tem acesso ao sandbox)
+  await prisma.member.upsert({
+    where: {
+      id: "member-admin-lab-001",
+    },
+    update: {},
+    create: {
+      id: "member-admin-lab-001",
+      userId: user.id,
+      organizationId: decodeLab.id,
+      role: "owner",
+      createdAt: new Date(),
+    },
+  });
+
+  console.log("✅ Member criado (vínculo usuário-organização Decode Lab)");
   console.log(`   Role: owner\n`);
 
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

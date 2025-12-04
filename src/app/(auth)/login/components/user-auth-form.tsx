@@ -2,13 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { authClient } from "@/lib/auth-client"
-import { Loader2 } from "lucide-react"
+import { Loader2, Eye, EyeOff } from "lucide-react"
 
 type AuthMode = "login" | "register"
 
@@ -21,6 +22,8 @@ export function UserAuthForm({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   async function handleLoginSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -42,7 +45,27 @@ export function UserAuthForm({
         return
       }
 
-      router.push("/dashboard")
+      // Obtém sessão para verificar role do usuário
+      const session = await authClient.getSession()
+      const userRole = session?.data?.user?.role
+
+      // Se for admin/owner, vai para o painel administrativo
+      if (userRole === "admin" || userRole === "owner") {
+        router.push("/dashboard")
+        router.refresh()
+        return
+      }
+
+      // Usuário comum - verifica se tem organização
+      const orgsResult = await authClient.organization.list()
+      if (orgsResult.data && orgsResult.data.length > 0) {
+        // Já tem organização, redireciona para o dashboard dela
+        const org = orgsResult.data[0]
+        router.push(`/${org.slug}/dashboard`)
+      } else {
+        // Primeiro acesso, vai para onboarding
+        router.push("/onboarding")
+      }
       router.refresh()
     } catch {
       setError("Erro ao fazer login. Tente novamente.")
@@ -90,9 +113,9 @@ export function UserAuthForm({
 
       setSuccess("Conta criada com sucesso! Redirecionando...")
       
-      // Faz login automático após registro
+      // Novo usuário - vai para onboarding para criar sua organização
       setTimeout(() => {
-        router.push("/dashboard")
+        router.push("/onboarding")
         router.refresh()
       }, 1500)
     } catch {
@@ -185,13 +208,24 @@ export function UserAuthForm({
                   Esqueceu a senha?
                 </a>
               </div>
-              <Input 
-                id="password" 
-                name="password"
-                type="password" 
-                required 
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Input 
+                  id="password" 
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required 
+                  disabled={isLoading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
@@ -209,13 +243,8 @@ export function UserAuthForm({
               </span>
             </div>
             <Button variant="outline" type="button" className="w-full" disabled={isLoading}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-                  fill="currentColor"
-                />
-              </svg>
-              Entrar com GitHub
+              <img src="/google.png" alt="Google" className="h-4 w-4" />
+              Entrar com Google
             </Button>
           </div>
         </form>
@@ -266,23 +295,45 @@ export function UserAuthForm({
             </div>
             <div className="grid gap-3">
               <Label htmlFor="register-password">Senha</Label>
-              <Input 
-                id="register-password" 
-                name="password"
-                type="password" 
-                required 
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Input 
+                  id="register-password" 
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required 
+                  disabled={isLoading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <div className="grid gap-3">
               <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-              <Input 
-                id="confirmPassword" 
-                name="confirmPassword"
-                type="password" 
-                required 
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Input 
+                  id="confirmPassword" 
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  required 
+                  disabled={isLoading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox id="terms" name="terms" required disabled={isLoading} />
@@ -313,13 +364,8 @@ export function UserAuthForm({
               </span>
             </div>
             <Button variant="outline" type="button" className="w-full" disabled={isLoading}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-                  fill="currentColor"
-                />
-              </svg>
-              Registrar com GitHub
+              <Image src="/google.png" alt="Google" width={20} height={20} className="mr-2" />
+              Registrar com Google
             </Button>
           </div>
         </form>

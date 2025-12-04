@@ -2,9 +2,8 @@
 // Documentação: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider   = "prisma-client-js"
-  output     = "../node_modules/.prisma/client"
-  engineType = "library"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -21,13 +20,15 @@ datasource db {
 /// Organização (Tenant) - Base para multi-tenancy
 
 model Organization {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique /// Subdomínio do tenant (ex: "acme" -> acme.decode.app)
-  logo      String? /// URL do logo no R2
-  metadata  Json? /// Configurações extras do tenant
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique /// Slug da URL do tenant (ex: "acme" -> decode.app/acme)
+  logo            String? /// URL do logo no R2
+  metadata        Json? /// Configurações extras do tenant
+  allowedFeatures String[] @default([]) /// Features ativas para esta organização (DEC-19)
+  isSandbox       Boolean  @default(false) /// Se true, é o Decode Lab (acesso a features dev)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relações serão adicionadas pelo Better-Auth
   // members     Member[]
@@ -45,6 +46,10 @@ model User {
   email            String
   emailVerified    Boolean      @default(false)
   image            String?
+  role             String       @default("user") /// Role do usuário: 'admin' | 'user'
+  banned           Boolean      @default(false) /// Se o usuário está banido
+  banReason        String?      /// Razão do banimento
+  banExpiresAt     DateTime?    /// Quando o banimento expira
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
   twoFactorEnabled Boolean?     @default(false)
@@ -69,6 +74,7 @@ model Session {
   userId               String
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeOrganizationId String?
+  impersonatedBy       String?  /// ID do admin que está impersonando este usuário
 
   @@unique([token])
   @@index([userId])

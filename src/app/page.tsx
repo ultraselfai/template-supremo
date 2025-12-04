@@ -7,7 +7,9 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/dashboard");
+    // Redireciona para login por padrão
+    // O admin-login é privado e só acessível por link direto
+    router.replace("/login");
   }, [router]);
 
   // Show a loading state while redirecting
@@ -15,7 +17,7 @@ export default function HomePage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="text-muted-foreground mt-2">Redirecting to dashboard...</p>
+        <p className="text-muted-foreground mt-2">Redirecionando...</p>
       </div>
     </div>
   );

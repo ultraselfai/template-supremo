@@ -170,3 +170,56 @@ html {
 .animate-logo-scroll:hover {
   animation-play-state: paused;
 }
+
+/* Cursor pointer for all interactive elements */
+@layer base {
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"],
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"],
+  [role="option"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="radio"],
+  [role="combobox"],
+  [role="listbox"],
+  [role="slider"],
+  [role="spinbutton"],
+  [role="treeitem"],
+  a[href],
+  label[for],
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="file"],
+  input[type="color"],
+  input[type="image"],
+  [data-slot="sidebar-menu-button"],
+  [data-slot="sidebar-menu-action"],
+  [data-radix-collection-item],
+  [data-state] {
+    cursor: pointer;
+  }
+
+  /* Exclude text inputs and textareas from pointer cursor */
+  input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):not([type="image"]),
+  textarea {
+    cursor: text;
+  }
+
+  /* Disabled elements should show not-allowed cursor */
+  [disabled],
+  [aria-disabled="true"],
+  .disabled {
+    cursor: not-allowed;
+  }
+}

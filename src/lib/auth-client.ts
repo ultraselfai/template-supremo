@@ -20,7 +20,7 @@
  */
 
 import { createAuthClient } from "better-auth/react";
-import { organizationClient, twoFactorClient } from "better-auth/client/plugins";
+import { organizationClient, twoFactorClient, adminClient } from "better-auth/client/plugins";
 import type { Auth } from "./auth";
 
 export const authClient = createAuthClient({
@@ -34,6 +34,9 @@ export const authClient = createAuthClient({
 
     // Two-Factor Authentication
     twoFactorClient(),
+
+    // Admin - permite gerenciar usuários e impersonar
+    adminClient(),
   ],
 });
 

@@ -6,8 +6,13 @@ import type { NextRequest } from 'next/server'
  * 
  * Responsável por:
  * - Detecção de tenant por subdomínio
+ * - Roteamento Admin vs App (DEC-18)
  * - Proteção de rotas autenticadas
  * - Redirecionamentos de rotas antigas
+ * 
+ * Regra de Ouro (Multi-tenant):
+ * - admin.decode.* ou /admin/* -> Route Group (admin)
+ * - [tenant].decode.* -> Route Group (app)/[tenantId]
  * 
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
@@ -15,8 +20,17 @@ import type { NextRequest } from 'next/server'
 // Rotas públicas (não requerem autenticação)
 const PUBLIC_ROUTES = [
   '/login',
+  '/admin-login',
+  '/onboarding',
+  '/sign-in',
+  '/sign-in-2',
+  '/sign-in-3',
+  '/sign-up',
+  '/sign-up-2',
+  '/sign-up-3',
   '/forgot-password',
-  '/admin/login',
+  '/forgot-password-2',
+  '/forgot-password-3',
   '/landing',
   '/',
 ]
@@ -28,7 +42,16 @@ const PUBLIC_PREFIXES = [
 
 // Rotas de admin (requerem role admin)
 const ADMIN_ROUTES = [
-  '/admin',
+  '/dashboard',
+  '/users',
+  '/settings',
+  '/calendar',
+  '/chat',
+  '/mail',
+  '/tasks',
+  '/faqs',
+  '/pricing',
+  '/upload-test',
 ]
 
 /**
@@ -39,6 +62,7 @@ const ADMIN_ROUTES = [
  * - cliente.localhost:3000 -> "cliente"
  * - localhost:3000 -> null (sem tenant)
  * - decode.app -> null (domínio principal)
+ * - admin.decode.app -> null (subdomínio reservado - vai para admin)
  */
 function getTenantFromHost(host: string): string | null {
   // Remove porta se existir
@@ -63,13 +87,30 @@ function getTenantFromHost(host: string): string | null {
   // O primeiro segmento é o tenant
   const tenant = parts[0]
   
-  // Ignora subdomínios reservados
+  // Ignora subdomínios reservados (admin vai para route group admin, não app)
   const reservedSubdomains = ['www', 'api', 'admin', 'app']
   if (reservedSubdomains.includes(tenant)) {
     return null
   }
   
   return tenant
+}
+
+/**
+ * Verifica se é acesso ao painel admin
+ * Via subdomínio admin.* ou rota /admin/*
+ */
+function isAdminAccess(host: string, pathname: string): boolean {
+  const hostname = host.split(':')[0]
+  const parts = hostname.split('.')
+  
+  // Subdomínio admin.*
+  if (parts.length >= 2 && parts[0] === 'admin') {
+    return true
+  }
+  
+  // Rota que está nas ADMIN_ROUTES
+  return ADMIN_ROUTES.some(route => pathname.startsWith(route))
 }
 
 /**
@@ -115,22 +156,35 @@ export function proxy(request: NextRequest) {
   if (pathname === '/register') {
     return NextResponse.redirect(new URL('/login', request.url))
   }
+
+  // /admin/login -> /admin-login (rota nova no route group admin)
+  if (pathname === '/admin/login') {
+    return NextResponse.redirect(new URL('/admin-login', request.url))
+  }
   
-  // ===== DETECÇÃO DE TENANT =====
+  // ===== DETECÇÃO DE CONTEXTO =====
   
-  // Extrai tenant do subdomínio
-  const tenant = getTenantFromHost(host)
+  // Verifica se é acesso admin
+  const isAdmin = isAdminAccess(host, pathname)
+  
+  // Extrai tenant do subdomínio (apenas para acesso não-admin)
+  const tenant = !isAdmin ? getTenantFromHost(host) : null
   
   // Também aceita header x-tenant-id para desenvolvimento
   const tenantHeader = request.headers.get('x-tenant-id')
   const effectiveTenant = tenant || tenantHeader
   
-  // Cria response com headers de tenant
+  // Cria response com headers de contexto
   const response = NextResponse.next()
   
   if (effectiveTenant) {
     // Adiciona tenant nos headers para uso em Server Components/Actions
     response.headers.set('x-tenant-slug', effectiveTenant)
+  }
+  
+  if (isAdmin) {
+    // Marca como acesso admin
+    response.headers.set('x-admin-access', 'true')
   }
   
   // ===== PROTEÇÃO DE ROTAS =====
@@ -144,24 +198,19 @@ export function proxy(request: NextRequest) {
   const authenticated = isAuthenticated(request)
   
   if (!authenticated) {
-    // Determina para qual login redirecionar
-    // Rotas do dashboard/admin vão para /admin/login
-    // Outras rotas vão para /login (usuário comum)
-    const isAdminRoute = pathname.startsWith('/dashboard') || 
-                         pathname.startsWith('/settings') ||
-                         pathname.startsWith('/admin') ||
-                         pathname.startsWith('/calendar') ||
-                         pathname.startsWith('/chat') ||
-                         pathname.startsWith('/mail') ||
-                         pathname.startsWith('/tasks') ||
-                         pathname.startsWith('/users') ||
-                         pathname.startsWith('/faqs') ||
-                         pathname.startsWith('/pricing')
-    
-    const loginPath = isAdminRoute ? '/admin/login' : '/login'
-    const loginUrl = new URL(loginPath, request.url)
+    // Sempre redireciona para /login (o admin-login é privado/secreto)
+    const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
+  }
+  
+  // ===== ROTEAMENTO TENANT (APP) =====
+  
+  // Se há tenant e não está em rota de tenant, redireciona
+  // Isso permite que cliente.decode.app/ vá para /(app)/[tenantId]/
+  if (effectiveTenant && !pathname.startsWith(`/${effectiveTenant}`)) {
+    // Para agora, apenas passa o header - o roteamento dinâmico
+    // será implementado conforme necessário
   }
   
   // Usuário autenticado, permite acesso

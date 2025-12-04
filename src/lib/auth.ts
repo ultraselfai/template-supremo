@@ -7,12 +7,13 @@
  * Plugins habilitados:
  * - organization: Multi-tenancy (subdomínios por tenant)
  * - twoFactor: Autenticação de dois fatores
+ * - admin: Gerenciamento de usuários e impersonação
  * - nextCookies: Integração com Next.js cookies
  */
 
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { organization, twoFactor } from "better-auth/plugins";
+import { organization, twoFactor, admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { prisma } from "@/db";
 
@@ -63,6 +64,16 @@ export const auth = betterAuth({
           console.log(`[DEV] OTP para ${user.email}: ${otp}`);
         },
       },
+    }),
+
+    // Admin Plugin - Gerenciamento de usuários e impersonação
+    // IMPORTANTE: Para impersonar, o usuário precisa ter role: "admin" no banco
+    // ou estar na lista adminUserIds. A verificação usa o campo user.role.
+    admin({
+      // Roles que são consideradas admin (podem impersonar, ban, etc)
+      adminRoles: ["admin", "owner"],
+      // Duração da sessão de impersonação: 1 hora
+      impersonationSessionDuration: 60 * 60,
     }),
 
     // Integração com Next.js (deve ser o último plugin)
