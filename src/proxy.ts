@@ -203,8 +203,9 @@ export function proxy(request: NextRequest) {
   const authenticated = isAuthenticated(request)
   
   if (!authenticated) {
-    // Sempre redireciona para /login (o admin-login é privado/secreto)
-    const loginUrl = new URL('/login', request.url)
+    // Admin vai para /admin-login, usuários vão para /login
+    const loginPath = isAdmin ? '/admin-login' : '/login'
+    const loginUrl = new URL(loginPath, request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
   }

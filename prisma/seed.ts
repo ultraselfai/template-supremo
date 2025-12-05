@@ -191,13 +191,81 @@ async function main() {
   console.log("✅ Member criado (vínculo usuário-organização Decode Lab)");
   console.log(`   Role: owner\n`);
 
+  // 6. Criar usuário sandbox (para testes de produção)
+  const sandboxEmail = "sandbox@decode.ink";
+  const sandboxPassword = "Admin@123";
+  const sandboxHashedPassword = await hashPassword(sandboxPassword);
+
+  const sandboxUser = await prisma.user.upsert({
+    where: { email: sandboxEmail },
+    update: {},
+    create: {
+      id: "user-sandbox-001",
+      name: "Decode Lab",
+      email: sandboxEmail,
+      emailVerified: true,
+      image: null,
+      role: "user", // Usuário normal (não admin)
+      banned: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log("✅ Usuário sandbox criado:");
+  console.log(`   Nome: ${sandboxUser.name}`);
+  console.log(`   Email: ${sandboxUser.email}`);
+  console.log(`   ID: ${sandboxUser.id}\n`);
+
+  // 7. Criar account para sandbox
+  await prisma.account.upsert({
+    where: {
+      id: "account-sandbox-001",
+    },
+    update: {
+      password: sandboxHashedPassword,
+    },
+    create: {
+      id: "account-sandbox-001",
+      userId: sandboxUser.id,
+      accountId: sandboxUser.id,
+      providerId: "credential",
+      password: sandboxHashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log("✅ Account sandbox (credenciais) criada");
+  console.log(`   Provider: credential`);
+  console.log(`   Senha: ${sandboxPassword}\n`);
+
+  // 8. Vincular sandbox ao Decode Lab
+  await prisma.member.upsert({
+    where: {
+      id: "member-sandbox-lab-001",
+    },
+    update: {},
+    create: {
+      id: "member-sandbox-lab-001",
+      userId: sandboxUser.id,
+      organizationId: decodeLab.id,
+      role: "owner",
+      createdAt: new Date(),
+    },
+  });
+
+  console.log("✅ Member sandbox criado (vínculo usuário-organização Decode Lab)");
+  console.log(`   Role: owner\n`);
+
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("🎉 Seed concluído com sucesso!");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("\n📋 Credenciais de acesso:\n");
-  console.log(`   Email: ${adminEmail}`);
-  console.log(`   Senha: ${adminPassword}`);
+  console.log(`   Admin:   ${adminEmail} / ${adminPassword}`);
+  console.log(`   Sandbox: ${sandboxEmail} / ${sandboxPassword}`);
   console.log("\n   🌐 URLs:");
+
   console.log("      Login: http://localhost:3000/sign-in");
   console.log("      Org:   http://decode.localhost:3000");
   console.log("\n");
