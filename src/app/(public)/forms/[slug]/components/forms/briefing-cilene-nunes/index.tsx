@@ -303,14 +303,9 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
         return (
           <Step11ReferenciasExtras
             brandReferences={formData.extraBrandReferences}
-            uploadedFiles={formData.uploadedFiles}
-            uploadedFilesUrls={formData.uploadedFilesUrls}
-            formSlug={formSlug}
             onBrandReferencesChange={(value) =>
               updateFormData("extraBrandReferences", value)
             }
-            onFilesChange={(files) => updateFormData("uploadedFiles", files)}
-            onFilesUrlsChange={(urls) => updateFormData("uploadedFilesUrls", urls)}
           />
         );
       default:
