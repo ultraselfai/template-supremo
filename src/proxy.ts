@@ -38,6 +38,7 @@ const PUBLIC_ROUTES = [
 // Rotas que começam com esses prefixos são públicas
 const PUBLIC_PREFIXES = [
   '/api/auth', // Better-Auth API
+  '/forms', // Formulários públicos (DEC-28/29)
 ]
 
 // Rotas de admin (requerem role admin)

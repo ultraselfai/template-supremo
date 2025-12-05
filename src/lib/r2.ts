@@ -4,6 +4,11 @@
  * Cliente S3-compatible para upload de arquivos no Cloudflare R2.
  * Usa Presigned URLs para upload direto do browser (sem passar pelo servidor).
  *
+ * IMPORTANTE: Usamos assinatura manual com @smithy/signature-v4 porque:
+ * - AWS SDK v3.943.0 adiciona x-amz-checksum-crc32 automaticamente nas presigned URLs
+ * - R2 não suporta esses headers de checksum e retorna 400 Bad Request
+ * - getSignedUrl não permite desabilitar completamente os checksums
+ *
  * Uso:
  * ```ts
  * import { getPresignedUploadUrl, getPublicUrl } from "@/lib/r2";
@@ -21,11 +26,12 @@
 
 import {
   S3Client,
-  PutObjectCommand,
   DeleteObjectCommand,
   HeadObjectCommand,
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { SignatureV4 } from "@aws-sdk/signature-v4";
+import { HttpRequest } from "@smithy/protocol-http";
+import { Sha256 } from "@aws-crypto/sha256-js";
 
 // Configuração do cliente R2
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID!;
@@ -36,8 +42,9 @@ const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!;
 
 // Endpoint do R2 (formato S3-compatible)
 const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+const R2_HOSTNAME = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 
-// Cliente S3 configurado para R2
+// Cliente S3 configurado para R2 (usado para operações server-side)
 export const r2Client = new S3Client({
   region: "auto",
   endpoint: R2_ENDPOINT,
@@ -45,6 +52,18 @@ export const r2Client = new S3Client({
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,
   },
+  forcePathStyle: true,
+});
+
+// Signer para presigned URLs manuais (sem checksum headers)
+const signer = new SignatureV4({
+  credentials: {
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
+  },
+  region: "auto",
+  service: "s3",
+  sha256: Sha256,
 });
 
 // Tipos de arquivos permitidos
@@ -77,6 +96,9 @@ function generateFileKey(filename: string, folder?: string): string {
 /**
  * Gera uma Presigned URL para upload direto do browser
  *
+ * Usa assinatura manual SigV4 para evitar x-amz-checksum-* headers
+ * que R2 não suporta.
+ *
  * @param filename - Nome original do arquivo
  * @param contentType - Tipo MIME do arquivo
  * @param folder - Pasta opcional (ex: "avatars", "logos")
@@ -90,13 +112,29 @@ export async function getPresignedUploadUrl(
 ): Promise<{ url: string; key: string }> {
   const key = generateFileKey(filename, folder);
 
-  const command = new PutObjectCommand({
-    Bucket: R2_BUCKET_NAME,
-    Key: key,
-    ContentType: contentType,
+  // Construir request HTTP manualmente SEM headers de checksum
+  // IMPORTANTE: x-amz-content-sha256 = UNSIGNED-PAYLOAD é necessário para presigned URLs
+  const request = new HttpRequest({
+    method: "PUT",
+    protocol: "https:",
+    hostname: R2_HOSTNAME,
+    path: `/${R2_BUCKET_NAME}/${key}`,
+    headers: {
+      host: R2_HOSTNAME,
+      "content-type": contentType,
+      "x-amz-content-sha256": "UNSIGNED-PAYLOAD",
+    },
   });
 
-  const url = await getSignedUrl(r2Client, command, { expiresIn });
+  // Assinar a request manualmente (presign = gerar URL assinada)
+  // unsignablePayload: true indica que o payload não será assinado
+  const signedRequest = await signer.presign(request, {
+    expiresIn,
+    unsignablePayload: true,
+  });
+
+  // Construir URL a partir da request assinada
+  const url = `${signedRequest.protocol}//${signedRequest.hostname}${signedRequest.path}${signedRequest.query ? `?${new URLSearchParams(signedRequest.query as Record<string, string>).toString()}` : ""}`;
 
   return { url, key };
 }
