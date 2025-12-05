@@ -1,5 +1,5 @@
 /**
- * Step 5: Ranking de Referências - Drag and Drop (DEC-29)
+ * Step 7: Ranking de Referências - Drag and Drop (DEC-29)
  * 
  * Versão profissional com DragOverlay e animações suaves
  * Clique na imagem para ver em tela cheia
@@ -20,17 +20,17 @@ interface LogoReference {
   alt: string;
 }
 
-interface Step5Props {
+interface Step7Props {
   likedIds: string[];
   ranking: string[];
   onRankingChange: (ranking: string[]) => void;
 }
 
-export function Step5RankingReferencias({
+export function Step7RankingReferencias({
   likedIds,
   ranking,
   onRankingChange,
-}: Step5Props) {
+}: Step7Props) {
   // Sync ranking with liked items - always keep them in sync
   useEffect(() => {
     // Se não há likes, limpar ranking

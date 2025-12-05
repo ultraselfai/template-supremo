@@ -1,5 +1,5 @@
 /**
- * Step 1: DNA da Marca - Tag Selector (DEC-29)
+ * Step 3: DNA da Marca - Tag Selector (DEC-29)
  */
 
 "use client";
@@ -12,19 +12,19 @@ import { Input } from "@/components/ui/input";
 import { StepHeader } from "../ui-components";
 import { BRAND_KEYWORDS, FORM_THEME } from "../types";
 
-interface Step1Props {
+interface Step3Props {
   selectedKeywords: string[];
   customKeywords: string[];
   onKeywordsChange: (keywords: string[]) => void;
   onCustomKeywordsChange: (keywords: string[]) => void;
 }
 
-export function Step1DNAMarca({
+export function Step3DNAMarca({
   selectedKeywords,
   customKeywords,
   onKeywordsChange,
   onCustomKeywordsChange,
-}: Step1Props) {
+}: Step3Props) {
   const [newKeyword, setNewKeyword] = useState("");
   const [showInput, setShowInput] = useState(false);
 

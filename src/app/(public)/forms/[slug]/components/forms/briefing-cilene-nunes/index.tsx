@@ -19,17 +19,19 @@ import { FormLayout, StepWrapper } from "./ui-components";
 import { BriefingViewMode } from "./view-mode";
 import { WelcomeScreen } from "./welcome-screen";
 import {
-  Step1DNAMarca,
-  Step2PerfilCliente,
-  Step3TransicaoCarreira,
-  Step4ReferenciasVisuais,
-  Step5RankingReferencias,
-  Step6Tipografia,
-  Step7RankingTipografias,
-  Step8PaletaCores,
-  Step9RankingElementos,
-  Step10NaoAbsoluto,
-  Step11ReferenciasExtras,
+  Step1PontoZero,
+  Step2Conquistas,
+  Step3DNAMarca,
+  Step4PerfilCliente,
+  Step5TransicaoCarreira,
+  Step6ReferenciasVisuais,
+  Step7RankingReferencias,
+  Step8Tipografia,
+  Step9RankingTipografias,
+  Step10PaletaCores,
+  Step11RankingElementos,
+  Step12NaoAbsoluto,
+  Step13ReferenciasExtras,
   CompletionScreen,
 } from "./steps";
 import { BRAND_KEYWORDS, LOGO_REFERENCES, TYPOGRAPHY_REFERENCES, COLOR_PALETTES, BRAND_ELEMENTS } from "./types";
@@ -72,20 +74,26 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
     try {
       // Prepare data for submission
       const submissionData = {
-        // Step 1
+        // Step 1 - Ponto Zero
+        pontoZero: formData.pontoZero,
+
+        // Step 2 - Conquistas
+        conquistas: formData.conquistas,
+
+        // Step 3 - DNA da Marca
         brandKeywords: formData.brandKeywords.map(
           (id) => BRAND_KEYWORDS.find((k) => k.id === id)?.label || id
         ),
         customKeywords: formData.customKeywords,
 
-        // Step 2
+        // Step 4 - Perfil do Cliente
         clientConcern: formData.clientConcern,
         clientConcernCustom: formData.clientConcernCustom,
 
-        // Step 3
+        // Step 5 - Transição de Carreira
         careerPositioning: formData.careerPositioning,
 
-        // Step 4 & 5
+        // Step 6 & 7 - Referências Visuais
         logoPreferences: formData.logoReferences.map((ref) => ({
           id: ref.id,
           src: LOGO_REFERENCES.find((r) => r.id === ref.id)?.src,
@@ -97,7 +105,7 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
           src: LOGO_REFERENCES.find((r) => r.id === id)?.src,
         })),
 
-        // Step 6 & 7
+        // Step 8 & 9 - Tipografia
         typographyPreferences: formData.typographyReferences.map((ref) => ({
           id: ref.id,
           src: TYPOGRAPHY_REFERENCES.find((r) => r.id === ref.id)?.src,
@@ -109,12 +117,12 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
           src: TYPOGRAPHY_REFERENCES.find((r) => r.id === id)?.src,
         })),
 
-        // Step 8
+        // Step 10 - Paleta de Cores
         selectedPalettes: formData.selectedPalettes.map((id) =>
           COLOR_PALETTES.find((p) => p.id === id)
         ).filter(Boolean),
 
-        // Step 9
+        // Step 11 - Ranking de Elementos
         elementsRanking: formData.elementsRanking.map((id, index) => ({
           position: index + 1,
           id,
@@ -130,10 +138,10 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
                   : "Eliminado",
         })),
 
-        // Step 10
+        // Step 12 - O Não Absoluto
         absoluteNo: formData.absoluteNo,
 
-        // Step 11
+        // Step 13 - Referências Extras
         extraBrandReferences: formData.extraBrandReferences,
         uploadedFiles: formData.uploadedFilesUrls, // URLs dos arquivos uploadados
 
@@ -162,7 +170,7 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
 
   // Handle next step or submit
   const handleNext = useCallback(() => {
-    if (currentStep === 11) {
+    if (currentStep === 13) {
       // Last step before completion - submit
       handleSubmit();
     } else {
@@ -207,7 +215,21 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
     switch (currentStep) {
       case 1:
         return (
-          <Step1DNAMarca
+          <Step1PontoZero
+            value={formData.pontoZero}
+            onChange={(value) => updateFormData("pontoZero", value)}
+          />
+        );
+      case 2:
+        return (
+          <Step2Conquistas
+            value={formData.conquistas}
+            onChange={(value) => updateFormData("conquistas", value)}
+          />
+        );
+      case 3:
+        return (
+          <Step3DNAMarca
             selectedKeywords={formData.brandKeywords}
             customKeywords={formData.customKeywords}
             onKeywordsChange={(keywords) =>
@@ -218,9 +240,9 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
             }
           />
         );
-      case 2:
+      case 4:
         return (
-          <Step2PerfilCliente
+          <Step4PerfilCliente
             selectedConcern={formData.clientConcern}
             customConcern={formData.clientConcernCustom}
             onConcernChange={(concern) =>
@@ -231,25 +253,25 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
             }
           />
         );
-      case 3:
+      case 5:
         return (
-          <Step3TransicaoCarreira
+          <Step5TransicaoCarreira
             selectedPosition={formData.careerPositioning}
             onPositionChange={(position) =>
               updateFormData("careerPositioning", position)
             }
           />
         );
-      case 4:
+      case 6:
         return (
-          <Step4ReferenciasVisuais
+          <Step6ReferenciasVisuais
             references={formData.logoReferences}
             onReferenceChange={handleLogoReferenceChange}
           />
         );
-      case 5:
+      case 7:
         return (
-          <Step5RankingReferencias
+          <Step7RankingReferencias
             likedIds={getLikedLogos()}
             ranking={formData.logoRanking}
             onRankingChange={(ranking) =>
@@ -257,16 +279,16 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
             }
           />
         );
-      case 6:
+      case 8:
         return (
-          <Step6Tipografia
+          <Step8Tipografia
             references={formData.typographyReferences}
             onReferenceChange={handleTypographyReferenceChange}
           />
         );
-      case 7:
+      case 9:
         return (
-          <Step7RankingTipografias
+          <Step9RankingTipografias
             likedIds={getLikedTypography()}
             ranking={formData.typographyRanking}
             onRankingChange={(ranking) =>
@@ -274,34 +296,34 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
             }
           />
         );
-      case 8:
+      case 10:
         return (
-          <Step8PaletaCores
+          <Step10PaletaCores
             selectedPalettes={formData.selectedPalettes}
             onPalettesChange={(palettes) =>
               updateFormData("selectedPalettes", palettes)
             }
           />
         );
-      case 9:
+      case 11:
         return (
-          <Step9RankingElementos
+          <Step11RankingElementos
             ranking={formData.elementsRanking}
             onRankingChange={(ranking) =>
               updateFormData("elementsRanking", ranking)
             }
           />
         );
-      case 10:
+      case 12:
         return (
-          <Step10NaoAbsoluto
+          <Step12NaoAbsoluto
             value={formData.absoluteNo}
             onChange={(value) => updateFormData("absoluteNo", value)}
           />
         );
-      case 11:
+      case 13:
         return (
-          <Step11ReferenciasExtras
+          <Step13ReferenciasExtras
             brandReferences={formData.extraBrandReferences}
             onBrandReferencesChange={(value) =>
               updateFormData("extraBrandReferences", value)
@@ -322,9 +344,9 @@ function BriefingFormEdit({ projectId, formSlug }: { projectId: string; formSlug
       onNext={handleNext}
       canProceed={canProceed(currentStep) && !isSubmitting}
       isFirstStep={currentStep === 1}
-      isLastStep={currentStep === 11}
+      isLastStep={currentStep === 13}
       nextLabel={
-        currentStep === 11
+        currentStep === 13
           ? isSubmitting
             ? "Enviando..."
             : "Concluir Briefing"

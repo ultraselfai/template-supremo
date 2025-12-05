@@ -1,5 +1,6 @@
 /**
- * Step 4: Referências Visuais - Like/Dislike (DEC-29)
+ * Step 8: Tipografia - Like/Dislike (DEC-29)
+ * Mesmo padrão do Step 6 - Grid 2 colunas
  */
 
 "use client";
@@ -8,29 +9,29 @@ import { motion } from "framer-motion";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import Image from "next/image";
 import { StepHeader } from "../ui-components";
-import { LOGO_REFERENCES, FORM_THEME } from "../types";
+import { TYPOGRAPHY_REFERENCES, FORM_THEME } from "../types";
 
-interface Step4Props {
+interface Step8Props {
   references: { id: string; liked: boolean | null }[];
   onReferenceChange: (id: string, liked: boolean | null) => void;
 }
 
-export function Step4ReferenciasVisuais({
+export function Step8Tipografia({
   references,
   onReferenceChange,
-}: Step4Props) {
+}: Step8Props) {
   const getReference = (id: string) => references.find((r) => r.id === id);
 
   return (
     <div>
       <StepHeader
-        title="Referências Visuais"
-        description="Marque com Gostei ou Não Gostei nas referências de logos abaixo"
+        title="Tipografia"
+        description="Agora analise as referências focando nas fontes tipográficas e dê like ou dislike de acordo com seu gosto pessoal."
       />
 
-      {/* Images Grid */}
+      {/* Grid 2 colunas - mesmo padrão do Step 4 */}
       <div className="grid grid-cols-2 gap-4">
-        {LOGO_REFERENCES.map((ref, index) => {
+        {TYPOGRAPHY_REFERENCES.map((ref, index) => {
           const refData = getReference(ref.id);
           const liked = refData?.liked;
 
@@ -44,7 +45,7 @@ export function Step4ReferenciasVisuais({
               style={{ backgroundColor: FORM_THEME.badgeBackground }}
             >
               {/* Image */}
-              <div className="relative aspect-square bg-gray-200">
+              <div className="relative aspect-square bg-white">
                 <Image
                   src={ref.src}
                   alt={ref.alt}
@@ -52,11 +53,8 @@ export function Step4ReferenciasVisuais({
                   className="object-cover"
                   unoptimized
                   onError={(e) => {
-                    // Fallback for missing images
                     (e.target as HTMLImageElement).src =
-                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect fill='%23E5E5E5' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' fill='%23999' font-family='sans-serif' font-size='14' text-anchor='middle' dy='.3em'%3ELogo " +
-                      (index + 1) +
-                      "%3C/text%3E%3C/svg%3E";
+                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect fill='%23FFFFFF' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' fill='%23333' font-family='Georgia,serif' font-size='18' text-anchor='middle' dy='.3em'%3ECilene%3C/text%3E%3C/svg%3E";
                   }}
                 />
               </div>

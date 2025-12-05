@@ -1,5 +1,5 @@
 /**
- * Step 2: Perfil do Cliente (DEC-29)
+ * Step 4: Perfil do Cliente (DEC-29)
  */
 
 "use client";
@@ -10,19 +10,19 @@ import { Label } from "@/components/ui/label";
 import { StepHeader } from "../ui-components";
 import { CLIENT_CONCERNS, FORM_THEME } from "../types";
 
-interface Step2Props {
+interface Step4Props {
   selectedConcern: string | null;
   customConcern: string;
   onConcernChange: (concern: string | null) => void;
   onCustomConcernChange: (text: string) => void;
 }
 
-export function Step2PerfilCliente({
+export function Step4PerfilCliente({
   selectedConcern,
   customConcern,
   onConcernChange,
   onCustomConcernChange,
-}: Step2Props) {
+}: Step4Props) {
   return (
     <div>
       <StepHeader

@@ -2,15 +2,17 @@
  * Steps Barrel Export (DEC-29)
  */
 
-export { Step1DNAMarca } from "./step-1-dna-marca";
-export { Step2PerfilCliente } from "./step-2-perfil-cliente";
-export { Step3TransicaoCarreira } from "./step-3-transicao-carreira";
-export { Step4ReferenciasVisuais } from "./step-4-referencias-visuais";
-export { Step5RankingReferencias } from "./step-5-ranking-referencias";
-export { Step6Tipografia } from "./step-6-tipografia";
-export { Step7RankingTipografias } from "./step-7-ranking-tipografias";
-export { Step8PaletaCores } from "./step-8-paleta-cores";
-export { Step9RankingElementos } from "./step-9-ranking-elementos";
-export { Step10NaoAbsoluto } from "./step-10-nao-absoluto";
-export { Step11ReferenciasExtras } from "./step-11-referencias-extras";
+export { Step1PontoZero } from "./step-1-ponto-zero";
+export { Step2Conquistas } from "./step-2-conquistas";
+export { Step3DNAMarca } from "./step-3-dna-marca";
+export { Step4PerfilCliente } from "./step-4-perfil-cliente";
+export { Step5TransicaoCarreira } from "./step-5-transicao-carreira";
+export { Step6ReferenciasVisuais } from "./step-6-referencias-visuais";
+export { Step7RankingReferencias } from "./step-7-ranking-referencias";
+export { Step8Tipografia } from "./step-8-tipografia";
+export { Step9RankingTipografias } from "./step-9-ranking-tipografias";
+export { Step10PaletaCores } from "./step-10-paleta-cores";
+export { Step11RankingElementos } from "./step-11-ranking-elementos";
+export { Step12NaoAbsoluto } from "./step-12-nao-absoluto";
+export { Step13ReferenciasExtras } from "./step-13-referencias-extras";
 export { CompletionScreen } from "./completion-screen";

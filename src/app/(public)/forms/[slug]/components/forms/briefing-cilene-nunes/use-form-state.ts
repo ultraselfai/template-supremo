@@ -5,42 +5,48 @@
 import { useState, useCallback } from "react";
 import { BriefingFormData, LOGO_REFERENCES, TYPOGRAPHY_REFERENCES, BRAND_ELEMENTS } from "./types";
 
-const TOTAL_STEPS = 12; // 11 steps + completion
+const TOTAL_STEPS = 14; // 13 steps + completion
 
 interface FormStateOptions {
   skipWelcome?: boolean;
 }
 
 const initialFormData: BriefingFormData = {
-  // Step 1
+  // Step 1 - Ponto Zero
+  pontoZero: "",
+  
+  // Step 2 - Conquistas
+  conquistas: "",
+  
+  // Step 3 - DNA da Marca
   brandKeywords: [],
   customKeywords: [],
   
-  // Step 2
+  // Step 4 - Perfil do Cliente
   clientConcern: null,
   clientConcernCustom: "",
   
-  // Step 3
+  // Step 5 - Transição de Carreira
   careerPositioning: null,
   
-  // Step 4 & 5
+  // Step 6 & 7 - Referências Visuais
   logoReferences: LOGO_REFERENCES.map(ref => ({ id: ref.id, liked: null })),
   logoRanking: [],
   
-  // Step 6 & 7
+  // Step 8 & 9 - Tipografia
   typographyReferences: TYPOGRAPHY_REFERENCES.map(ref => ({ id: ref.id, liked: null })),
   typographyRanking: [],
   
-  // Step 8
+  // Step 10 - Paleta de Cores
   selectedPalettes: [],
   
-  // Step 9
+  // Step 11 - Ranking de Elementos
   elementsRanking: BRAND_ELEMENTS.map(e => e.id),
   
-  // Step 10
+  // Step 12 - O Não Absoluto
   absoluteNo: "",
   
-  // Step 11
+  // Step 13 - Referências Extras
   extraBrandReferences: "",
   uploadedFiles: [],
   uploadedFilesUrls: [],
@@ -105,27 +111,31 @@ export function useFormState(options: FormStateOptions = {}) {
   // Check if step is valid to proceed
   const canProceed = useCallback((step: number): boolean => {
     switch (step) {
-      case 1: // DNA da Marca
+      case 1: // Ponto Zero
+        return formData.pontoZero.trim() !== "";
+      case 2: // Conquistas
+        return formData.conquistas.trim() !== "";
+      case 3: // DNA da Marca
         return formData.brandKeywords.length > 0 || formData.customKeywords.length > 0;
-      case 2: // Perfil do Cliente
+      case 4: // Perfil do Cliente
         return formData.clientConcern !== null || formData.clientConcernCustom.trim() !== "";
-      case 3: // Transição de Carreira
+      case 5: // Transição de Carreira
         return formData.careerPositioning !== null;
-      case 4: // Referências Visuais
+      case 6: // Referências Visuais
         return formData.logoReferences.some(ref => ref.liked !== null);
-      case 5: // Ranking Logos
+      case 7: // Ranking Logos
         return getLikedLogos().length === 0 || formData.logoRanking.length > 0;
-      case 6: // Tipografia
+      case 8: // Tipografia
         return formData.typographyReferences.some(ref => ref.liked !== null);
-      case 7: // Ranking Tipografias
+      case 9: // Ranking Tipografias
         return getLikedTypography().length === 0 || formData.typographyRanking.length > 0;
-      case 8: // Paleta de Cores
+      case 10: // Paleta de Cores
         return formData.selectedPalettes.length > 0;
-      case 9: // Ranking Elementos
+      case 11: // Ranking Elementos
         return formData.elementsRanking.length > 0;
-      case 10: // O "Não" Absoluto
+      case 12: // O "Não" Absoluto
         return true; // Optional
-      case 11: // Referências Extras
+      case 13: // Referências Extras
         return true; // Optional
       default:
         return true;

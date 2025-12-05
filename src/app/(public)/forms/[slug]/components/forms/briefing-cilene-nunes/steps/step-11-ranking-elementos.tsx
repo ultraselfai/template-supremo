@@ -1,5 +1,5 @@
 /**
- * Step 9: Ranking de Elementos - Drag and Drop (DEC-29)
+ * Step 11: Ranking de Elementos - Drag and Drop (DEC-29)
  * 
  * Versão profissional com DragOverlay e animações suaves
  */
@@ -13,15 +13,15 @@ import { BRAND_ELEMENTS, ELEMENT_POSITIONS, FORM_THEME } from "../types";
 
 type BrandElement = (typeof BRAND_ELEMENTS)[number];
 
-interface Step9Props {
+interface Step11Props {
   ranking: string[];
   onRankingChange: (ranking: string[]) => void;
 }
 
-export function Step9RankingElementos({
+export function Step11RankingElementos({
   ranking,
   onRankingChange,
-}: Step9Props) {
+}: Step11Props) {
   // Get the actual element objects in order
   const orderedElements = useMemo(() => {
     return ranking

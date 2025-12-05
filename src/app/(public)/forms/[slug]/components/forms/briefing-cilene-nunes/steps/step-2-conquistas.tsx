@@ -1,5 +1,6 @@
 /**
- * Step 10: O "Não" Absoluto (DEC-29)
+ * Step 2: Conquistas (DEC-29)
+ * Maiores conquistas e orgulhos na área
  */
 
 "use client";
@@ -9,17 +10,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { StepHeader } from "../ui-components";
 import { FORM_THEME } from "../types";
 
-interface Step10Props {
+interface Step2Props {
   value: string;
   onChange: (value: string) => void;
 }
 
-export function Step10NaoAbsoluto({ value, onChange }: Step10Props) {
+export function Step2Conquistas({ value, onChange }: Step2Props) {
   return (
     <div>
       <StepHeader
-        title='O "Não" Absoluto'
-        description="Existe alguma coisa (cor, forma ou símbolo) que você DETESTA e eu não devo usar de jeito nenhum?"
+        title="Conquistas"
+        description="Compartilhe suas maiores conquistas na área, seja formações, transformações geradas e o que você se recordar que te dá orgulho de fazer o que você faz:"
       />
 
       <motion.div
@@ -30,20 +31,14 @@ export function Step10NaoAbsoluto({ value, onChange }: Step10Props) {
         <Textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Ex: Não gosto de rosa pink, formas muito geométricas, símbolos infantis demais..."
-          className="min-h-[150px] resize-none text-base leading-relaxed"
+          placeholder="Suas formações, certificações, resultados, depoimentos, momentos marcantes..."
+          className="min-h-[180px] resize-none text-base leading-relaxed"
           style={{
             backgroundColor: FORM_THEME.badgeBackground,
             borderColor: "transparent",
             color: FORM_THEME.title,
           }}
         />
-        <p
-          className="text-sm mt-3 text-center"
-          style={{ color: FORM_THEME.description }}
-        >
-          Este campo é opcional, mas muito útil para evitar surpresas!
-        </p>
       </motion.div>
     </div>
   );

@@ -3,41 +3,47 @@
  */
 
 export interface BriefingFormData {
-  // Step 1: DNA da Marca
+  // Step 1: Ponto Zero
+  pontoZero: string;
+
+  // Step 2: Conquistas
+  conquistas: string;
+
+  // Step 3: DNA da Marca
   brandKeywords: string[];
   customKeywords: string[];
 
-  // Step 2: Perfil do Cliente
+  // Step 4: Perfil do Cliente
   clientConcern: string | null;
   clientConcernCustom: string;
 
-  // Step 3: Transição de Carreira
+  // Step 5: Transição de Carreira
   careerPositioning: string | null;
 
-  // Step 4 & 5: Referências Visuais
+  // Step 6 & 7: Referências Visuais
   logoReferences: {
     id: string;
     liked: boolean | null;
   }[];
   logoRanking: string[]; // IDs ordenados
 
-  // Step 6 & 7: Tipografia
+  // Step 8 & 9: Tipografia
   typographyReferences: {
     id: string;
     liked: boolean | null;
   }[];
   typographyRanking: string[];
 
-  // Step 8: Paleta de Cores (até 2)
+  // Step 10: Paleta de Cores (até 2)
   selectedPalettes: string[];
 
-  // Step 9: Ranking de Elementos
+  // Step 11: Ranking de Elementos
   elementsRanking: string[];
 
-  // Step 10: O "Não" Absoluto
+  // Step 12: O "Não" Absoluto
   absoluteNo: string;
 
-  // Step 11: Referências Extras
+  // Step 13: Referências Extras
   extraBrandReferences: string;
   uploadedFiles: File[];
   uploadedFilesUrls: UploadedFileInfo[]; // URLs dos arquivos já uploadados

@@ -1,5 +1,5 @@
 /**
- * Step 8: Paleta de Cores (DEC-29)
+ * Step 10: Paleta de Cores (DEC-29)
  * Permite escolher até 2 paletas
  */
 
@@ -10,17 +10,17 @@ import { Check } from "lucide-react";
 import { StepHeader } from "../ui-components";
 import { COLOR_PALETTES, FORM_THEME } from "../types";
 
-interface Step8Props {
+interface Step10Props {
   selectedPalettes: string[];
   onPalettesChange: (palettes: string[]) => void;
 }
 
 const MAX_PALETTES = 2;
 
-export function Step8PaletaCores({
+export function Step10PaletaCores({
   selectedPalettes,
   onPalettesChange,
-}: Step8Props) {
+}: Step10Props) {
   const handlePaletteClick = (paletteId: string) => {
     if (selectedPalettes.includes(paletteId)) {
       // Remove se já selecionado

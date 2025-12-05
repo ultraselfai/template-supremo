@@ -1,5 +1,5 @@
 /**
- * Step 11: Referências Extras
+ * Step 13: Referências Extras
  * Campo de texto simples para nomes de marcas
  */
 
@@ -10,15 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { StepHeader } from "../ui-components";
 import { FORM_THEME } from "../types";
 
-interface Step11Props {
+interface Step13Props {
   brandReferences: string;
   onBrandReferencesChange: (value: string) => void;
 }
 
-export function Step11ReferenciasExtras({
+export function Step13ReferenciasExtras({
   brandReferences,
   onBrandReferencesChange,
-}: Step11Props) {
+}: Step13Props) {
   return (
     <div>
       <StepHeader

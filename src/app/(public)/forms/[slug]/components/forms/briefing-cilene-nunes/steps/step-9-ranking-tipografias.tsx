@@ -1,5 +1,5 @@
 /**
- * Step 7: Ranking de Tipografias - Drag and Drop (DEC-29)
+ * Step 9: Ranking de Tipografias - Drag and Drop (DEC-29)
  * 
  * Versão profissional com DragOverlay e animações suaves
  * Clique na imagem para ver em tela cheia
@@ -20,17 +20,17 @@ interface TypographyReference {
   alt: string;
 }
 
-interface Step7Props {
+interface Step9Props {
   likedIds: string[];
   ranking: string[];
   onRankingChange: (ranking: string[]) => void;
 }
 
-export function Step7RankingTipografias({
+export function Step9RankingTipografias({
   likedIds,
   ranking,
   onRankingChange,
-}: Step7Props) {
+}: Step9Props) {
   // Sync ranking with liked items - always keep them in sync
   useEffect(() => {
     // Se não há likes, limpar ranking

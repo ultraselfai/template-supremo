@@ -1,5 +1,5 @@
 /**
- * Step 3: Transição de Carreira (DEC-29)
+ * Step 5: Transição de Carreira (DEC-29)
  */
 
 "use client";
@@ -8,15 +8,15 @@ import { motion } from "framer-motion";
 import { StepHeader } from "../ui-components";
 import { CAREER_POSITIONS, FORM_THEME } from "../types";
 
-interface Step3Props {
+interface Step5Props {
   selectedPosition: string | null;
   onPositionChange: (position: string | null) => void;
 }
 
-export function Step3TransicaoCarreira({
+export function Step5TransicaoCarreira({
   selectedPosition,
   onPositionChange,
-}: Step3Props) {
+}: Step5Props) {
   return (
     <div>
       <StepHeader
