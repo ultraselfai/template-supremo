@@ -49,23 +49,26 @@ export function UserAuthForm({
       const session = await authClient.getSession()
       const userRole = session?.data?.user?.role
 
-      // Se for admin/owner, vai para o painel administrativo
+      // PRIMEIRO verifica se pertence a alguma organização
+      // Usuários de organização sempre vão para o painel do tenant
+      const orgsResult = await authClient.organization.list()
+      if (orgsResult.data && orgsResult.data.length > 0) {
+        // Tem organização - vai para o dashboard dela (prioridade sobre admin)
+        const org = orgsResult.data[0]
+        router.push(`/${org.slug}/dashboard`)
+        router.refresh()
+        return
+      }
+
+      // Sem organização - verifica se é admin do sistema
       if (userRole === "admin" || userRole === "owner") {
         router.push("/dashboard")
         router.refresh()
         return
       }
 
-      // Usuário comum - verifica se tem organização
-      const orgsResult = await authClient.organization.list()
-      if (orgsResult.data && orgsResult.data.length > 0) {
-        // Já tem organização, redireciona para o dashboard dela
-        const org = orgsResult.data[0]
-        router.push(`/${org.slug}/dashboard`)
-      } else {
-        // Primeiro acesso, vai para onboarding
-        router.push("/onboarding")
-      }
+      // Usuário comum sem organização - vai para onboarding
+      router.push("/onboarding")
       router.refresh()
     } catch {
       setError("Erro ao fazer login. Tente novamente.")

@@ -57,3 +57,13 @@ export type Invitation = Prisma.InvitationModel
  * 
  */
 export type TwoFactor = Prisma.TwoFactorModel
+/**
+ * Model Project
+ * Projeto de Formulário - Cada projeto tem um slug único e formulário hardcoded
+ */
+export type Project = Prisma.ProjectModel
+/**
+ * Model Submission
+ * Submissão de Formulário - Armazena as respostas enviadas
+ */
+export type Submission = Prisma.SubmissionModel

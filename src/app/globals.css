@@ -3,6 +3,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom Font: Sunlight Dreams */
+@font-face {
+  font-family: "Sunlight Dreams";
+  src: url("/fonts/SunlightDreams.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom Font: Manrope */
+@font-face {
+  font-family: "Manrope";
+  src: url("https://fonts.gstatic.com/s/manrope/v15/xn7gYHE41ni1AdIRggexSg.woff2") format("woff2");
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --font-sans: var(--font-inter);
   --radius-sm: calc(var(--radius) - 4px);

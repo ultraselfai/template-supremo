@@ -143,6 +143,16 @@ export const featureRegistry: Feature[] = [
 
   // ===== EXPERIMENTAL FEATURES (Decode Lab only) =====
   {
+    key: 'projects',
+    label: 'Projetos',
+    description: 'Formulários personalizados para briefings (DEC-28)',
+    status: 'dev',
+    icon: 'FolderKanban',
+    category: 'experimental',
+    route: '/projects',
+    showInSidebar: true,
+  },
+  {
     key: 'financeiro',
     label: 'Módulo Financeiro',
     description: 'Gestão financeira completa (em desenvolvimento)',

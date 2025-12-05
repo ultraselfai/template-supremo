@@ -13,6 +13,7 @@ import {
   BarChart3,
   DollarSign,
   Bot,
+  FolderKanban,
   type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
@@ -49,6 +50,7 @@ const iconMap: Record<string, LucideIcon> = {
   BarChart3,
   DollarSign,
   Bot,
+  FolderKanban,
 }
 
 interface ClientSidebarProps extends React.ComponentProps<typeof Sidebar> {
