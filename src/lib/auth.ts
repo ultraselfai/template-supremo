@@ -86,11 +86,43 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days in seconds
     // Atualizar sessão quando faltar 1 dia para expirar
     updateAge: 60 * 60 * 24, // 1 day in seconds
+    // Cookie cross-domain para funcionar com múltiplos subdomínios
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
   },
 
-  // URLs de redirecionamento
-  // TODO: Ajustar para produção
-  // baseURL: process.env.BETTER_AUTH_URL,
+  // URL base para produção (obrigatório para callbacks de auth)
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL,
+  
+  // Origens confiáveis para requests de auth
+  // Permite que tanto console.decode.ink quanto app.decode.ink façam auth
+  trustedOrigins: [
+    "https://app.decode.ink",
+    "https://console.decode.ink",
+    // Wildcards para subdomínios de tenants
+    "https://*.decode.ink",
+    // Desenvolvimento local
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ],
+  
+  // Configuração avançada de cookies para multi-domínio
+  // Permite que o cookie de sessão seja compartilhado entre subdomínios
+  advanced: {
+    // Define o domínio do cookie para permitir compartilhamento entre subdomínios
+    // Em produção: .decode.ink (permite app.decode.ink e console.decode.ink)
+    // Em desenvolvimento: não define domínio (localhost funciona automaticamente)
+    cookieDomain: process.env.NODE_ENV === "production" ? ".decode.ink" : undefined,
+    // Usa secure cookies em produção
+    useSecureCookies: process.env.NODE_ENV === "production",
+    // Cross-site cookies para funcionar com diferentes origens
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: process.env.NODE_ENV === "production" ? ".decode.ink" : undefined,
+    },
+  },
 });
 
 // Exporta o tipo do auth para inferência no cliente

@@ -11,8 +11,8 @@ import type { NextRequest } from 'next/server'
  * - Redirecionamentos de rotas antigas
  * 
  * Regra de Ouro (Multi-tenant):
- * - admin.decode.* ou /admin/* -> Route Group (admin)
- * - [tenant].decode.* -> Route Group (app)/[tenantId]
+ * - admin.decode.* ou console.decode.* ou /admin/* -> Route Group (admin)
+ * - app.decode.* ou [tenant].decode.* -> Route Group (app)/[tenantId]
  * 
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
@@ -88,8 +88,8 @@ function getTenantFromHost(host: string): string | null {
   // O primeiro segmento é o tenant
   const tenant = parts[0]
   
-  // Ignora subdomínios reservados (admin vai para route group admin, não app)
-  const reservedSubdomains = ['www', 'api', 'admin', 'app']
+  // Ignora subdomínios reservados (admin/console vai para route group admin, não app)
+  const reservedSubdomains = ['www', 'api', 'admin', 'console', 'app']
   if (reservedSubdomains.includes(tenant)) {
     return null
   }
@@ -99,14 +99,18 @@ function getTenantFromHost(host: string): string | null {
 
 /**
  * Verifica se é acesso ao painel admin
- * Via subdomínio admin.* ou rota /admin/*
+ * Via subdomínio admin.* ou console.* ou rota /admin/*
+ * 
+ * Produção:
+ * - console.decode.ink -> Admin panel
+ * - app.decode.ink -> User/tenant panel
  */
 function isAdminAccess(host: string, pathname: string): boolean {
   const hostname = host.split(':')[0]
   const parts = hostname.split('.')
   
-  // Subdomínio admin.*
-  if (parts.length >= 2 && parts[0] === 'admin') {
+  // Subdomínios admin.* ou console.*
+  if (parts.length >= 2 && (parts[0] === 'admin' || parts[0] === 'console')) {
     return true
   }
   
