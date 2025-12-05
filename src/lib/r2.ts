@@ -127,10 +127,9 @@ export async function getPresignedUploadUrl(
   });
 
   // Assinar a request manualmente (presign = gerar URL assinada)
-  // unsignablePayload: true indica que o payload não será assinado
+  // O header x-amz-content-sha256: UNSIGNED-PAYLOAD indica que o payload não será assinado
   const signedRequest = await signer.presign(request, {
     expiresIn,
-    unsignablePayload: true,
   });
 
   // Construir URL a partir da request assinada
