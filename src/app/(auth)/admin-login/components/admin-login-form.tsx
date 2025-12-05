@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -17,6 +17,7 @@ export function AdminLoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
@@ -29,6 +30,9 @@ export function AdminLoginForm({
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
+    
+    // Obtém callbackUrl da URL (definido pelo proxy ao redirecionar)
+    const callbackUrl = searchParams.get('callbackUrl')
 
     try {
       const result = await authClient.signIn.email({
@@ -55,9 +59,11 @@ export function AdminLoginForm({
         return
       }
 
-      router.push("/dashboard")
+      // Usa callbackUrl se disponível, senão vai para /dashboard
+      router.push(callbackUrl || "/dashboard")
       router.refresh()
-    } catch {
+    } catch (err) {
+      console.error("Erro no login:", err)
       setError("Erro ao fazer login. Tente novamente.")
     } finally {
       setIsLoading(false)

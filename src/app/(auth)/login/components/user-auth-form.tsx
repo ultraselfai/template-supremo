@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,7 @@ export function UserAuthForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [mode, setMode] = useState<AuthMode>("login")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,6 +34,9 @@ export function UserAuthForm({
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
+    
+    // Obtém callbackUrl da URL (definido pelo proxy ao redirecionar)
+    const callbackUrl = searchParams.get('callbackUrl')
 
     try {
       const result = await authClient.signIn.email({
@@ -45,19 +49,31 @@ export function UserAuthForm({
         return
       }
 
+      // Se há um callbackUrl, usa ele diretamente
+      if (callbackUrl) {
+        router.push(callbackUrl)
+        router.refresh()
+        return
+      }
+
       // Obtém sessão para verificar role do usuário
       const session = await authClient.getSession()
       const userRole = session?.data?.user?.role
 
       // PRIMEIRO verifica se pertence a alguma organização
       // Usuários de organização sempre vão para o painel do tenant
-      const orgsResult = await authClient.organization.list()
-      if (orgsResult.data && orgsResult.data.length > 0) {
-        // Tem organização - vai para o dashboard dela (prioridade sobre admin)
-        const org = orgsResult.data[0]
-        router.push(`/${org.slug}/dashboard`)
-        router.refresh()
-        return
+      try {
+        const orgsResult = await authClient.organization.list()
+        if (orgsResult.data && orgsResult.data.length > 0) {
+          // Tem organização - vai para o dashboard dela (prioridade sobre admin)
+          const org = orgsResult.data[0]
+          router.push(`/${org.slug}/dashboard`)
+          router.refresh()
+          return
+        }
+      } catch (orgError) {
+        // Falha ao listar organizações - continua com fluxo normal
+        console.warn("Falha ao listar organizações:", orgError)
       }
 
       // Sem organização - verifica se é admin do sistema
@@ -70,7 +86,8 @@ export function UserAuthForm({
       // Usuário comum sem organização - vai para onboarding
       router.push("/onboarding")
       router.refresh()
-    } catch {
+    } catch (err) {
+      console.error("Erro no login:", err)
       setError("Erro ao fazer login. Tente novamente.")
     } finally {
       setIsLoading(false)

@@ -2,6 +2,7 @@ import { UserAuthForm } from "./components/user-auth-form"
 import { Logo } from "@/components/logo"
 import Link from "next/link"
 import Image from "next/image"
+import { Suspense } from "react"
 
 export const metadata = {
   title: "Login | Decode Console",
@@ -22,7 +23,9 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md">
-            <UserAuthForm />
+            <Suspense fallback={<div className="flex items-center justify-center"><span className="animate-pulse">Carregando...</span></div>}>
+              <UserAuthForm />
+            </Suspense>
           </div>
         </div>
       </div>
