@@ -218,5 +218,5 @@ export const FORM_THEME = {
   buttonBackground: "#D97757",
   buttonText: "#FAF9F5",
   fontBody: "'Manrope', sans-serif",
-  fontTitle: "'Sunlight Dreams', serif",
+  fontTitle: "'Crimson Text', serif",
 } as const;

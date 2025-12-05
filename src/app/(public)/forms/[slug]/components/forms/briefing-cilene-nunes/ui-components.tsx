@@ -201,7 +201,7 @@ export function StepHeader({ title, description }: StepHeaderProps) {
         className="text-2xl font-bold mb-3"
         style={{ 
           color: FORM_THEME.title,
-          fontFamily: '"Sunlight Dreams", cursive',
+          fontFamily: '"Crimson Text", serif',
         }}
       >
         {title}
