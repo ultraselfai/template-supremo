@@ -15,6 +15,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -95,13 +96,14 @@ function SortableItem({ id, index, children, isDragOverlay, isActive }: Sortable
     transition: transition || undefined,
     opacity: isDragging ? 0 : 1,
     pointerEvents: isDragging ? "none" : "auto",
+    touchAction: "none", // Evita conflito com scroll no mobile
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 p-3 rounded-xl mb-2 bg-white cursor-grab active:cursor-grabbing select-none"
+      className="flex items-center gap-3 p-3 rounded-xl mb-2 bg-white cursor-grab active:cursor-grabbing select-none touch-none"
       {...attributes}
       {...listeners}
     >
@@ -145,6 +147,12 @@ export function SortableList<T>({
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 8,
       },
     }),
     useSensor(KeyboardSensor, {
