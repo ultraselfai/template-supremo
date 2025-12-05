@@ -134,9 +134,16 @@ function isPublicRoute(pathname: string): boolean {
 /**
  * Verifica se o usuário está autenticado
  * Baseado no cookie de sessão do Better-Auth
+ * 
+ * Em produção (useSecureCookies: true), Better-Auth usa prefixo "__Secure-"
+ * Em desenvolvimento, usa nome simples sem prefixo
  */
 function isAuthenticated(request: NextRequest): boolean {
-  // Better-Auth usa o cookie "better-auth.session_token"
+  // Tenta primeiro o cookie seguro (produção)
+  const secureCookie = request.cookies.get('__Secure-better-auth.session_token')
+  if (secureCookie?.value) return true
+  
+  // Fallback para cookie sem prefixo (desenvolvimento local)
   const sessionCookie = request.cookies.get('better-auth.session_token')
   return !!sessionCookie?.value
 }
